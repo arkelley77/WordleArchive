@@ -1,4 +1,4 @@
-﻿#include "WordleArchive.h"
+#include "WordleArchive.h"
 
 using std::cin;
 using std::cout;
@@ -8,43 +8,51 @@ using std::string;
 
 class WordlePlayer {
 public:
-    WordlePlayer()
+    WordlePlayer(string cwd)
         : word_list(), dictionary(), custom_dictionary(), custom_word_list(),
         stats(), current_operation(home), current_word(""), valid_guesses(), keys() {
         cout << "Loading word dictionary..." << flush;
         try {
-            dictionary.readFromFile("files/word_list.txt");
+            dictionary.readFromFile(cwd + "/files/word_list.txt");
         }
         catch (const std::runtime_error& e) {
             cout << ' ' << e.what() << ", Failed!" << endl;
-            throw std::runtime_error("failed reading dictionary file");
+            //throw std::runtime_error("failed reading dictionary file");
+            current_operation = quit;
+            return;
         }
         cout << " Done\nLoading word list..." << flush;
         try {
-            word_list.readFromFile("files/wordles.txt");
+            word_list.readFromFile(cwd + "/files/wordles.txt");
             dictionary.combine(word_list);
         }
         catch (const std::runtime_error& e) {
             cout << ' ' << e.what() << ", Failed!" << endl;
-            throw std::runtime_error("failed reading word list file");
+            //throw std::runtime_error("failed reading word list file");
+            current_operation = quit;
+            return;
         }
         cout << " Done\nLoading custom word list..." << flush;
         try {
-            custom_word_list.readFromFile("custom_word_list.txt");
-            custom_dictionary.readFromFile("custom_dictionary.txt");
+            custom_word_list.readFromFile(cwd + "/custom_word_list.txt");
+            custom_dictionary.readFromFile(cwd + "/custom_dictionary.txt");
             custom_dictionary.combine(custom_word_list);  // just in case they don't include the actual words
         }
         catch (const std::runtime_error& e) {
             cout << ' ' << e.what() << ", Failed!" << endl;
-            throw std::runtime_error("failed reading custom word list file");
+            //throw std::runtime_error("failed reading custom word list file");
+            current_operation = quit;
+            return;
         }
         cout << " Done\nLoading statistics..." << flush;
         try {
-            stats.readFromFile("statistics.csv");
+            stats.readFromFile(cwd + "/statistics.csv");
         }
         catch (const std::runtime_error& e) {
             cout << ' ' << e.what() << ", Failed!" << endl;
-            throw std::runtime_error("failed reading statistics file");
+            //throw std::runtime_error("failed reading statistics file");
+            current_operation = quit;
+            return;
         }
         cout << " Done" << endl;
         current_word.number = -1;
@@ -789,9 +797,22 @@ private:
     std::unordered_map<char, Color::Modifier> keys;
 };
 
-int main() {
+int main(int argc, char* argv[]) {
+    if (argc == 0 || argv == nullptr) {
+        cout << "Error: No arguments" << endl;
+        return 1;
+    }
+    string cwd(argv[0]);
+    size_t slash_idx = cwd.size() - 1;
+    for (; slash_idx != string::npos; --slash_idx) {
+        if (cwd[slash_idx] == '/' || cwd[slash_idx] == '\\') {
+            cwd = cwd.substr(0, slash_idx);
+            break;
+        }
+    }
+    if (slash_idx == -1UL) cwd = "";
     srand((unsigned int)time(NULL));
-    WordlePlayer wordle_player;
+    WordlePlayer wordle_player(cwd);
     return wordle_player.main();
 }
 
