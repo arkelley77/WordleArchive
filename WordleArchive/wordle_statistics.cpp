@@ -81,6 +81,7 @@ void WordleStatistics::readFromFile(string filename) {
     unfinished_games.push_back(&(games[word]));
     getline(ifs, line);
   }
+  ifs.close();
   return;
 }
 
