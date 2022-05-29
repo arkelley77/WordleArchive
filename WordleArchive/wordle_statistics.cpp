@@ -106,9 +106,9 @@ void WordleStatistics::writeToFile() {
     if (game.state != unfinished) finished_games.push_back(game);
     else unfinished_games.push_back(game);
   }
+  ofs << "Completed Games\n";
+  ofs << "Wordle number (-1 for custom),Correct word,Won? (1 for yes; 0 for no),Guesses---->\n";
   if (!finished_games.empty()) {
-    ofs << "Completed Games\n";
-    ofs << "Wordle number (-1 for custom),Correct word,Won? (1 for yes; 0 for no),Guesses---->\n";
     for (auto game : finished_games) {
       ofs << game.word_number << ',' << game.word << ',' << (game.state == won);
       for (auto guess : game.guesses) {
@@ -116,8 +116,8 @@ void WordleStatistics::writeToFile() {
       }
       ofs << '\n';
     }
-    ofs << '\n';
   }
+  ofs << '\n';
 
   if (!unfinished_games.empty()) {
     ofs << "Unfinished Games\n";
