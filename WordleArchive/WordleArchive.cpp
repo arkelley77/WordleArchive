@@ -667,7 +667,7 @@ public:
             }
             cout << header;
             if (guesses_remaining == 1) {
-                cout << "                       " << Color::error << guesses_remaining << " tries left\n\n";
+                cout << "                       " << Color::error << guesses_remaining << " try left\n\n";
             }
             else {
                 cout << "                       " << guesses_remaining << " tries left\n\n";
