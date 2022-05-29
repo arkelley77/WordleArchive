@@ -164,8 +164,15 @@ void WordleStatistics::addEntry(WordleWord word, std::vector<string> guesses) {
   } else {
     // update status of previously played game
     if (state == won && word.word.size() == 5) {
-      if (games[word.word].state != unfinished) {
-        --guess_frequencies[games[word.word].guesses.size() - 1];
+      switch (games[word.word].state) {
+        case won:
+          --guess_frequencies[games[word.word].guesses.size() - 1];
+          break;
+        case lost:
+          --guess_frequencies[7 - 1];
+          break;
+        default:
+          break;
       }
     }
     games[word.word] = game;
