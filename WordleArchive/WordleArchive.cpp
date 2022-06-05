@@ -338,8 +338,8 @@ public:
     void printPrevGuesses() {
         prepKeyboard();
 
-        for (string& guess : valid_guesses) {
-            for (std::string::size_type i = 0; i < (59 - current_word.word.size()) / 2; ++i) {
+        for (auto& guess : valid_guesses) {
+            for (string::size_type i = 0; i < (59 - current_word.word.size()) / 2; ++i) {
                 cout << Color::defaults << " ";
             }
             for (string::size_type i = 0; i < current_word.word.size(); ++i) {
@@ -359,7 +359,7 @@ public:
 
                     // the number of times we've guessed this letter so far
                     int num_repeats_in_guess_so_far = 0;
-                    std::string::size_type char_prev_loc = guess.find(guess[i]);
+                    string::size_type char_prev_loc = guess.find(guess[i]);
                     while (char_prev_loc < i) {
                         ++num_repeats_in_guess_so_far;
                         if (current_word.word[char_prev_loc] == guess[i]) {
