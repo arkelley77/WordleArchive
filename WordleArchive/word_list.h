@@ -71,6 +71,8 @@ class WordList {
       return word_list_by_number.at(rand() % word_list_by_number.size());
     }
 
+    inline size_t size() const { return word_list_by_number.size(); }
+
     auto begin() {  return word_list_by_number.begin(); }
 
     auto end() { return word_list_by_number.end(); }

@@ -6,11 +6,7 @@ cmake_minimum_required (VERSION 3.8)
 # Set the project name and version
 project (WordleArchive VERSION 1.0)
 
-if (CMAKE_VERSION VERSION_GREATER 3.12)
-  set (CMAKE_CXX_STANDARD 20)
-else()
-  set (CMAKE_CXX_STANDARD 17)
-endif()
+set (CMAKE_CXX_STANDARD 17)
 
 set (CMAKE_CXX_STANDARD_REQUIRED True)
 
