@@ -48,7 +48,7 @@ void WordleStatistics::readFromFile(string filename) {
       if (game.state == won) {
         ++guess_frequencies.at(game.guesses.size() - 1);
       } else {
-        ++guess_frequencies[7 - 1];
+        ++guess_frequencies[6];
       }
     }
     games.emplace(word, game);
@@ -101,7 +101,7 @@ void WordleStatistics::writeToFile() {
   // categorize games
   std::vector<WordleGame> finished_games;
   std::vector<WordleGame> unfinished_games;
-  for (auto pair : games) {
+  for (auto& pair : games) {
     WordleGame game = pair.second;
     if (game.state != unfinished) finished_games.push_back(game);
     else unfinished_games.push_back(game);
@@ -109,9 +109,9 @@ void WordleStatistics::writeToFile() {
   ofs << "Completed Games\n";
   ofs << "Wordle number (-1 for custom),Correct word,Won? (1 for yes; 0 for no),Guesses---->\n";
   if (!finished_games.empty()) {
-    for (auto game : finished_games) {
+    for (auto& game : finished_games) {
       ofs << game.word_number << ',' << game.word << ',' << (game.state == won);
-      for (auto guess : game.guesses) {
+      for (auto& guess : game.guesses) {
         ofs << ',' << guess;
       }
       ofs << '\n';
@@ -122,9 +122,9 @@ void WordleStatistics::writeToFile() {
   if (!unfinished_games.empty()) {
     ofs << "Unfinished Games\n";
     ofs << "Wordle number,Correct word,Guesses---->\n";
-    for (auto game : unfinished_games) {
+    for (auto& game : unfinished_games) {
       ofs << game.word_number << ',' << game.word;
-      for (auto guess : game.guesses) {
+      for (auto& guess : game.guesses) {
         ofs << ',' << guess;
       }
       ofs << '\n';
@@ -157,7 +157,7 @@ void WordleStatistics::addEntry(WordleWord word, std::vector<string> guesses) {
   else state = lost;
   WordleGame game = {word.number, word.word, guesses, state};
   if (state == won && word.word.size() == 5) ++guess_frequencies[guesses.size() - 1];
-  else if (state == lost && word.word.size() == 5) ++guess_frequencies[7 - 1];
+  else if (state == lost && word.word.size() == 5) ++guess_frequencies[6];
   if (!inFile(word)) {
     // completely new game never played before
     games.emplace(word.word, game);
@@ -169,7 +169,7 @@ void WordleStatistics::addEntry(WordleWord word, std::vector<string> guesses) {
           --guess_frequencies[games[word.word].guesses.size() - 1];
           break;
         case lost:
-          --guess_frequencies[7 - 1];
+          --guess_frequencies[6];
           break;
         default:
           break;
@@ -191,7 +191,7 @@ WordleGame WordleStatistics::loadEntry(WordleWord word) {
     };
     return game;
   }
-  for (auto pair : games) {
+  for (auto& pair : games) {
     WordleGame game = pair.second;
     if (game.word == word.word) {
       return game;
@@ -202,7 +202,7 @@ WordleGame WordleStatistics::loadEntry(WordleWord word) {
 
 size_t WordleStatistics::numFinishedGames() {
   size_t num_finished = 0;
-  for (auto pair : games) {
+  for (auto& pair : games) {
     WordleGame game = pair.second;
     if (game.state != unfinished) ++num_finished;
   }
@@ -212,7 +212,7 @@ size_t WordleStatistics::numFinishedGames() {
 double WordleStatistics::calcWinRate() {
   double num_won = 0.0;
   double num_finished = (double)games.size();
-  for (auto pair : games) {
+  for (auto& pair : games) {
     WordleGame game = pair.second;
     if (game.state == won) ++num_won;
     else if (game.state == unfinished) --num_finished;
@@ -223,7 +223,7 @@ double WordleStatistics::calcWinRate() {
 double WordleStatistics::calcAverageNumGuesses() {
   double num_guesses = 0.0;
   double num_finished = 0.0;
-  for (auto pair : games) {
+  for (auto& pair : games) {
     WordleGame game = pair.second;
     num_guesses += (double)game.guesses.size();
     if (game.state == lost) ++num_guesses;

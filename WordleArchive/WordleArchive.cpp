@@ -338,7 +338,7 @@ public:
     void printPrevGuesses() {
         prepKeyboard();
 
-        for (auto guess : valid_guesses) {
+        for (string& guess : valid_guesses) {
             for (std::string::size_type i = 0; i < (59 - current_word.word.size()) / 2; ++i) {
                 cout << Color::defaults << " ";
             }
