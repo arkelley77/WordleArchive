@@ -1,4 +1,5 @@
 #include <fstream>
+#include <sstream>
 #include <string>
 #include <vector>
 
@@ -15,8 +16,8 @@ std::vector<std::string> date_thing(std::string line) {
 
 int main() {
   std::ifstream ifs("wordles.txt");
-  std::ofstream ofs("processed.txt");
-  if (!ifs.is_open() || !ofs.is_open()) return 1;
+  std::ostringstream oss;
+  if (!ifs.is_open()) return 1;
   std::vector<std::string> removed_dates;
   std::string line;
   std::getline(ifs, line);
@@ -26,11 +27,15 @@ int main() {
       removed_dates.push_back(date_thing(line)[0]);
     } else {
       removed_dates.push_back(date_thing(line)[0]);
-      ofs << removed_dates[0] << ' ' << date_thing(line)[1] << '\n';
+      oss << removed_dates[0] << ' ' << date_thing(line)[1] << '\n';
       removed_dates.erase(removed_dates.begin()); // pop front
     }
     std::getline(ifs, line);
   }
-  ofs << '\n';
+  oss << '\n';
+  ifs.close();
+  std::ofstream ofs("wordles.txt");
+  if (!ofs.is_open()) return 1;
+  ofs << oss.str();
   ofs.close();
 }
