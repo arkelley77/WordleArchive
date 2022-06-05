@@ -63,7 +63,7 @@ public:
         cout << "                      by  Alex Kelley" << "\n\n";
 
         cout << "This archive contains all Wordles, both past, present, and\n";
-        cout << "future. It goes from Day 0, June 19, 2021, to Day 2306,\n";
+        cout << "future. It goes from Day 0, June 19, 2021, to Day " << word_list.size() - 1 << ",\n";
         cout << "October 12, 2027." << "\n\n";
 
         cout << "If you'd like, you can create a custom word list by adding\n";
@@ -200,7 +200,7 @@ public:
             current_operation = quit;
             return -1;
         }
-        else if (word_number < 0 || word_number > 2306 || !cin.good()) {
+        else if (word_number < 0 || word_number > word_list.size() - 1 || !cin.good()) {
             cout << "Invalid number, please try again." << endl;
             if (!cin.good()) {
                 cin.clear();
@@ -339,7 +339,7 @@ public:
         prepKeyboard();
 
         for (auto guess : valid_guesses) {
-            for (std::string::size_type i = 0; i < (59 - current_word.word.size()) / 2; ++i) {
+            for (string::size_type i = 0; i < (59 - current_word.word.size()) / 2; ++i) {
                 cout << Color::defaults << " ";
             }
             for (string::size_type i = 0; i < current_word.word.size(); ++i) {
@@ -753,7 +753,7 @@ public:
                     playWordle();
                     break;
                 }
-                else if (current_word.number == 2306) {
+                else if (current_word.number == word_list.size() - 1) {
                     // there is no next word
                     cout << "You've just played the last Wordle. Go play outside!" << endl;
                     current_operation = home;
