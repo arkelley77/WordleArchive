@@ -10,9 +10,16 @@ set (CMAKE_CXX_STANDARD 17)
 
 set (CMAKE_CXX_STANDARD_REQUIRED True)
 
+find_package(SFML 2.5 
+  COMPONENTS 
+    system window graphics network audio REQUIRED)
 
 # Add source to this project's executable.
-add_executable (WordleArchive "WordleArchive.cpp" "WordleArchive.h" "color.cpp" "strtoupper.cpp" "word_dict.cpp" "word_list.cpp" "wordle_statistics.cpp")
+add_executable (WordleArchive_CLI "cli_main.cpp" "cli_main.h" "color.cpp" "strtoupper.cpp" "word_dict.cpp" "word_list.cpp" "wordle_statistics.cpp" "gui.h")
+add_executable (WordleArchive "gui_main.cpp" "gui_main.h" "color.cpp" "strtoupper.cpp" "word_dict.cpp" "word_list.cpp" "wordle_statistics.cpp" "gui_config.h" "gui.h")
+
+
+target_link_libraries(WordleArchive sfml-graphics)
 
 add_custom_command(
         TARGET WordleArchive POST_BUILD
@@ -28,6 +35,11 @@ add_custom_command(
         COMMAND ${CMAKE_COMMAND} -E copy
                 ${CMAKE_SOURCE_DIR}/WordleArchive/files/wordles.txt
                 ${CMAKE_CURRENT_BINARY_DIR}/files/wordles.txt)
+add_custom_command(
+        TARGET WordleArchive POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+                ${CMAKE_SOURCE_DIR}/WordleArchive/files/Mona-Sans-Regular.ttf
+                ${CMAKE_CURRENT_BINARY_DIR}/files/Mona-Sans-Regular.ttf)
 
 
 # TODO: Add tests and install targets if needed.

@@ -94,6 +94,10 @@ class CustomWordList {
       return *word_pointers.at(rand() % word_pointers.size());
     }
 
+    void clear() {
+      word_pointers.clear();
+      word_list.clear();
+    }
     bool empty() const { return word_list.empty(); }
     std::vector<WordleWord>::size_type size() const { return word_list.size(); }
 

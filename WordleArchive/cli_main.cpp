@@ -1,7 +1,8 @@
-#include "WordleArchive.h"
+#include "cli_main.h"
 
 using std::cin;
 using std::cout;
+using std::cerr;
 using std::endl;
 using std::flush;
 using std::string;
@@ -16,10 +17,9 @@ public:
             dictionary.readFromFile(cwd + "/files/word_list.txt");
         }
         catch (const std::runtime_error& e) {
-            cout << ' ' << e.what() << ", Failed!" << endl;
+            cerr << ' ' << e.what() << ", Failed!" << endl;
             //throw std::runtime_error("failed reading dictionary file");
-            current_operation = quit;
-            return;
+            exit(1);
         }
         cout << " Done\nLoading word list..." << flush;
         try {
@@ -27,10 +27,9 @@ public:
             dictionary.combine(word_list);
         }
         catch (const std::runtime_error& e) {
-            cout << ' ' << e.what() << ", Failed!" << endl;
+            cerr << ' ' << e.what() << ", Failed!" << endl;
             //throw std::runtime_error("failed reading word list file");
-            current_operation = quit;
-            return;
+            exit(1);
         }
         cout << " Done\nLoading custom word list..." << flush;
         try {
@@ -39,24 +38,23 @@ public:
             custom_dictionary.combine(custom_word_list);  // just in case they don't include the actual words
         }
         catch (const std::runtime_error& e) {
-            cout << ' ' << e.what() << ", Failed!" << endl;
+            cerr << ' ' << e.what() << ", Failed!" << endl;
             //throw std::runtime_error("failed reading custom word list file");
-            current_operation = quit;
-            return;
+            exit(1);
         }
         cout << " Done\nLoading statistics..." << flush;
         try {
             stats.readFromFile(cwd + "/statistics.csv");
         }
         catch (const std::runtime_error& e) {
-            cout << ' ' << e.what() << ", Failed!" << endl;
+            cerr << ' ' << e.what() << ", Failed!" << endl;
             //throw std::runtime_error("failed reading statistics file");
-            current_operation = quit;
-            return;
+            exit(1);
         }
         cout << " Done" << endl;
         current_word.number = -1;
     }
+
 
     void printTitlePage() const {
         cout << "---------------    Wordle Archive Reborn  -----------------\n";

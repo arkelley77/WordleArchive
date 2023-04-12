@@ -1,6 +1,7 @@
 #include "wordle_statistics.h"
 
 void WordleStatistics::readFromFile(string filename) {
+  valid = false;
   this->filename = filename;
   std::ifstream ifs(filename);
   if (!ifs.is_open()) {
@@ -82,6 +83,7 @@ void WordleStatistics::readFromFile(string filename) {
     getline(ifs, line);
   }
   ifs.close();
+  valid = true;
   return;
 }
 

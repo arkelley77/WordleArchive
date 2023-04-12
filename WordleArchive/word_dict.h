@@ -55,6 +55,12 @@ class CustomDict : public WordDict {
     void createFile(std::ofstream& ofs);
 
     void saveToFile();
+    
+    void clear() {
+      words_pointers.clear();
+      valid_words.clear();
+      filename = "";
+    }
 };
 
 #endif /* word_dict_h */

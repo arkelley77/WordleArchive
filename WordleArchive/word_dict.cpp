@@ -83,6 +83,7 @@ void CustomDict::createFile(std::ofstream& ofs) {
 }
 
 void CustomDict::saveToFile() {
+  if (filename.empty()) return;
   std::ofstream ofs(filename);
   createFile(ofs);
   WordDict::saveToFile(ofs);
