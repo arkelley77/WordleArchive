@@ -9,7 +9,7 @@ using std::string;
 class WordlePlayer {
 public:
     WordlePlayer(string cwd)
-        : word_list(), dictionary(), custom_dictionary(), custom_word_list(),
+        : word_list(), dictionary(), custom_dictionary(), custom_word_list(), new_word_list(),
         stats(), current_operation(home), current_word(""), valid_guesses(), keys() {
         cout << "Loading word dictionary..." << flush;
         try {
@@ -44,6 +44,16 @@ public:
             current_operation = quit;
             return;
         }
+        cout << " Done\nLoading new word list..." << flush;
+        try {
+          new_word_list.readFromFile(cwd + "/files/new_word_list.txt");
+          new_dict.readFromFile(cwd + "/files/new_word_list.txt");
+        }
+        catch (const std::runtime_error& e) {
+          cout << ' ' << e.what() << ", Failed!" << endl;
+          current_operation = quit;
+          return;
+        }
         cout << " Done\nLoading statistics..." << flush;
         try {
             stats.readFromFile(cwd + "/statistics.csv");
@@ -65,6 +75,12 @@ public:
         cout << "This archive contains all Wordles, both past, present, and\n";
         cout << "future. It goes from Day 0, June 19, 2021, to Day " << word_list.size() - 1 << ",\n";
         cout << "October 12, 2027." << "\n\n";
+
+        if (!new_word_list.empty()) {
+          cout << "Additionally, it contains a word list I made myself, consisting\n";
+          cout << "of the " << new_word_list.size() << " most common 5 - letter words that are not found in\n";
+          cout << "the original Wordle list." << "\n\n";
+        }
 
         cout << "If you'd like, you can create a custom word list by adding\n";
         cout << "words to the file 'custom_word_list.txt'. They can be any\n";
@@ -94,16 +110,20 @@ public:
             }
         }
         cout << "Menu :\n";
-        cout << "0: Close program:      type 'q', 'quit', or '0', or\n";
-        cout << "                       press " << EOF_KEY << " at any time\n";
-        cout << "1: Word by number:     type 'number' or '1'\n";
-        cout << "2: Word by date:       type 'date' or '2'\n";
-        cout << "3: Get today's Wordle: type 'today' or '3'\n";
-        cout << "4: Random Wordle Word: type 'random' or '4'\n";
-        cout << "5: Random Hard Word:   type 'hard' or '5'\n";
-        cout << "6: Info (HELP):        type 'info', 'help', or '6'\n";
+        cout << "0: Close program:        type 'q', 'quit', or '0', or\n";
+        cout << "                         press " << EOF_KEY << " at any time\n";
+        cout << "1: Word by number:       type 'number' or '1'\n";
+        cout << "2: Word by date:         type 'date' or '2'\n";
+        cout << "3: Get today's Wordle:   type 'today' or '3'\n";
+        cout << "4: Random Wordle Word:   type 'random' or '4'\n";
+        cout << "5: Random Hard Word:     type 'hard' or '5'\n";
+        cout << "6: Info (HELP):          type 'info', 'help', or '6'\n";
         if (!custom_word_list.empty()) {
-            cout << "7: Custom Wordle:      type 'custom' or '7'\n";
+            cout << "7: Custom Wordle:        type 'custom' or '7'\n";
+        }
+        if (!new_word_list.empty()) {
+            cout << "8: New Wordle by number: type 'new' or '8'\n";
+            cout << "9: Random New Wordle:    type 'rnew' or '9'\n";
         }
         cout << std::flush;
         string response;
@@ -133,6 +153,14 @@ public:
         else if (!custom_word_list.empty() && (response == "CUSTOM" || response == "7")) {
             current_operation = custom_word;
         }
+        else if (!new_word_list.empty()) {
+          if (response == "NEW" || response == "8") {
+            current_operation = new_word_by_number;
+          }
+          else if (response == "RNEW" || response == "9") {
+            current_operation = random_new_word;
+          }
+        }
         else {
             cout << Color::error << "Invalid menu response, please try again." << Color::defaults << endl;
             cin.clear();
@@ -144,43 +172,51 @@ public:
     void promptInfo() {
         cout << "\n\nWordle Archive Reborn Help\n";
 
-        cout << "\n0: Close program:      type 'q', 'quit', or '0', or\n";
+        cout << "\n0: Close program:        type 'q', 'quit', or '0', or\n";
         cout << "                       press " << EOF_KEY << " at any time\n";
         cout << "    Exits the program.\n";
 
-        cout << "\n1: Word by number:     type 'number' or '1'\n";
+        cout << "\n1: Word by number:       type 'number' or '1'\n";
         cout << "    Selects a word by its word number.\n";
         cout << "    For example, today's Wordle is Wordle #";
         cout << word_list.getWordByDate(todaysDate()).number << ".\n";
 
-        cout << "\n2: Word by date:       type 'date' or '2'\n";
+        cout << "\n2: Word by date:         type 'date' or '2'\n";
         cout << "    Selects a word given the month, day, and year.\n";
         cout << "    Yes, you can play a Wordle from the future.\n";
 
-        cout << "\n3: Get today's Wordle: type 'today' or '3'\n";
+        cout << "\n3: Get today's Wordle:   type 'today' or '3'\n";
         cout << "    Allows you to play the Wordle of the day.\n";
         cout << "    This is the same one that the New York Times has.\n";
 
-        cout << "\n4: Random Wordle Word: type 'random' or '4'\n";
+        cout << "\n4: Random Wordle Word:   type 'random' or '4'\n";
         cout << "    Selects a Wordle at random from the New York Times\n";
         cout << "    list of correct Wordle answers.\n";
 
-        cout << "\n5: Random Hard Word:   type 'hard' or '5'\n";
+        cout << "\n5: Random Hard Word:     type 'hard' or '5'\n";
         cout << "    Selects a Wordle at random from the New York Times\n";
         cout << "    dictionary of possible Wordle guesses. This mode is\n";
         cout << "    substantially harder due to the inclusion of words\n";
         cout << "    like 'speug', but allows for greater variety due to\n";
         cout << "    drawing from a list of over 12,000 words.\n";
 
-        cout << "\n6: Info (HELP):        type 'info', 'help', or '6'\n";
+        cout << "\n6: Info (HELP):          type 'info', 'help', or '6'\n";
         cout << "    Displays this screen.\n";
 
-        cout << "\n7: Custom Wordle:      type 'custom' or '7'\n";
+        cout << "\n7: Custom Wordle:        type 'custom' or '7'\n";
         cout << "    This program has the ability to use words of an arbitrary\n";
         cout << "    length using a custom word list. Simply add a collection\n";
         cout << "    of words to the file 'custom_word_list.txt', and this\n";
         cout << "    option will appear. When selected, the program will select\n";
         cout << "    one of these custom words at random and give you 6 guesses.\n";
+
+        cout << "\n8: New Wordle by number: type 'new' or '8'\n";
+        cout << "    This program comes with a custom Wordle-like list using\n";
+        cout << "    the " << new_word_list.size() << " most common 5-letter words that aren't already Wordles.\n";
+        cout << "    Use this option to select one by its number.\n";
+
+        cout << "\n9: Random New Wordle:    type 'rnew' or '9'\n";
+        cout << "    Selects a word at random from the 'new' Wordle list.\n";
 
         cout << "\nPress enter to return to the menu.\n";
         while (cin.get() != '\n') {
@@ -595,7 +631,9 @@ public:
                 cin >> guess;
                 continue;
             }
-            if (cin.fail() || (!dictionary.isWordInList(guess) && (current_word.number != -1 || !custom_dictionary.isWordInList(guess)))) {
+            if (cin.fail() || (!dictionary.isWordInList(guess) && 
+              (current_word.number != -1 || !custom_dictionary.isWordInList(guess)) && 
+              (current_word.day != -3 || !new_dict.isWordInList(guess)))) {
                 cout << "\n\n";
                 header = current_word.getHeader();
                 for (string::size_type i = 0; i < (59 - header.size()) / 2; ++i) {
@@ -742,10 +780,21 @@ public:
                     break;
                 }
                 else {
-                    cout << Color::error << "No custom Wordles" << Color::defaults << endl;
-                    current_operation = home;
-                    break;
+                  cout << Color::error << "No custom Wordles" << Color::defaults << endl;
+                  current_operation = home;
+                  break;
                 }
+            case new_word_by_number:
+              word_number = promptWordNumber();
+              if (word_number == -1) break;
+              if (word_number >= new_word_list.size()) break;
+              current_word = new_word_list.getWordByNumber(word_number);
+              playWordle();
+              break;
+            case random_new_word:
+              current_word = new_word_list.getRandomWord();
+              playWordle();
+              break;
             case next_word:
                 if (current_word.number == -1) {
                     // custom word
@@ -790,6 +839,8 @@ private:
     WordDict dictionary;
     CustomDict custom_dictionary;
     CustomWordList custom_word_list;
+    NewWordList new_word_list;
+    NewDict new_dict;
     WordleStatistics stats;
     MenuOption current_operation;
     WordleWord current_word;

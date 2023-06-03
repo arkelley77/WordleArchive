@@ -57,4 +57,9 @@ class CustomDict : public WordDict {
     void saveToFile();
 };
 
+class NewDict : public CustomDict {
+public:
+  void readFromFile(std::string filename);
+};
+
 #endif /* word_dict_h */

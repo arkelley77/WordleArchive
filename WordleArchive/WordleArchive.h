@@ -25,7 +25,7 @@
 enum MenuOption : char {
     quit, word_by_number, word_by_date, random_wordle_word,
     random_dict_word, custom_word, todays_word, next_word, home,
-    resume_game,
+    resume_game, new_word_by_number, random_new_word,
 };
 
 const string keyboard = "QWERTYUIOP\n ASDFGHJKL \n  ZXCVBNM ";

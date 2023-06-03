@@ -69,6 +69,16 @@ void CustomDict::readFromFile(std::string filename) {
   WordDict::readFromFile(ifs);
   ifs.close();
 }
+void NewDict::readFromFile(std::string filename) {
+  std::ifstream ifs(filename);
+  std::string word;
+  ifs >> word;
+  while (ifs.good()) {
+    valid_words.emplace(strToUpper(word));
+    words_pointers.push_back(&*valid_words.find(strToUpper(word)));
+    ifs >> word;
+  }
+}
 
 void CustomDict::createFile(std::string filename) {
   std::ofstream ofs(filename);

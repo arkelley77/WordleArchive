@@ -26,6 +26,11 @@ add_custom_command(
 add_custom_command(
         TARGET WordleArchive POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy
+                ${CMAKE_SOURCE_DIR}/WordleArchive/files/new_word_list.txt
+                ${CMAKE_CURRENT_BINARY_DIR}/files/new_word_list.txt)
+add_custom_command(
+        TARGET WordleArchive POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
                 ${CMAKE_SOURCE_DIR}/WordleArchive/files/wordles.txt
                 ${CMAKE_CURRENT_BINARY_DIR}/files/wordles.txt)
 

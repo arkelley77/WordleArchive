@@ -34,7 +34,7 @@ int monthToInt(std::string& month);
 
 class WordleWord {
   public:
-    WordleWord() : month(-3), day(-3), year(-3), number(-3), word() {}
+    WordleWord() : month(-4), day(-4), year(-4), number(-4), word() {}
     WordleWord(std::string word) 
     : month(), day(-1), year(-1), number(-1), word(word) {}
     WordleWord(int month, int day, int year, int number, std::string word)
@@ -103,6 +103,27 @@ class CustomWordList {
   private:
     std::vector<WordleWord*> word_pointers;
     std::unordered_map<std::string, WordleWord> word_list;
+};
+
+class NewWordList {
+public:
+  NewWordList() {}
+
+  void readFromFile(std::string filename);
+
+  WordleWord getWordByNumber(int number) {
+    return words.at(number - 1);
+  }
+
+  WordleWord getRandomWord() {
+    return words[rand() % size()];
+  }
+
+  bool empty() const { return words.empty(); }
+  size_t size() const { return words.size(); }
+
+private:
+  std::vector<WordleWord> words;
 };
 
 #endif /* word_list_h */

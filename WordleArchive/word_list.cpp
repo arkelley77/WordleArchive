@@ -57,7 +57,11 @@ std::string WordleWord::getHeader() const {
   }else if (day == -1) {
     os << "Custom Wordle: ";
     os << word.size() << " letters" << std::endl;
-  } else {
+  }
+  else if (day == -3) {
+    os << "New Wordle #" << number << std::endl;
+  }
+  else {
     os << "Wordle #" << number << ", ";
     os << getMonthName() << ' ' << day << ' ' <<  year << std::endl;
   }
@@ -102,6 +106,18 @@ void CustomWordList::readFromFile(std::string filename) {
     ifs >> word;
   }
   ifs.close();
+}
+
+void NewWordList::readFromFile(std::string filename) {
+  std::ifstream ifs(filename);
+  if (!ifs.is_open()) return;
+  std::string word;
+  int number = 0;
+  ifs >> word;
+  while (ifs.good()) {
+    words.emplace_back(-3, -3, -3, ++number, strToUpper(word));
+    ifs >> word;
+  }
 }
 
 void CustomWordList::createFile(std::string filename) {
